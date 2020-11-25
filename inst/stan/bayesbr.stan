@@ -5,6 +5,9 @@ data{
   int<lower=0> q;
   real<lower=0> a;
   real<lower=0> b;
+  real<lower=0> atau;
+  real<lower=0> btau;
+  real<lower = 0, upper = 1> spatial_theta;
   vector[n] Y;
   matrix[n,p] X;
   matrix[n,q] W;
@@ -12,14 +15,17 @@ data{
   vector[p] variance_betas;
   vector[q] mean_gammas;
   vector[q] variance_gammas;
+  matrix[n,n] cov_delta;
 }
+
 // Parameters block
 parameters{
   vector[p] betas;
   vector[q] gammas;
+  vector[n] delta;
+  real<lower = 0> tau;
   real<lower = 0> zeta_e;
   real<lower = 0, upper = 1> theta_e;
-
 }
 
 //Parameter block without priori
@@ -29,15 +35,23 @@ transformed parameters{
   vector[n] lpredt;
   vector[n] lpredz;
 
+
   if(p!=0){
-    lpredt = X * betas;
+    if(spatial_theta == 1){
+      lpredt = X * betas + delta;
+    }
+    else{
+      lpredt = X * betas;
+    }
     theta = exp(lpredt)./(1+exp(lpredt));
   }
   if(q!=0){
     lpredz = W * gammas;
     zeta = exp(lpredz);
   }
+
 }
+
 
 // Model block
 model{
@@ -65,4 +79,8 @@ model{
   theta_e ~ beta(a,b);
   gammas ~ normal(mean_gammas,variance_gammas);
   zeta_e ~ gamma(a,b);
+  if(spatial_theta == 1){
+    tau ~ gamma(atau,btau);
+    delta ~ multi_normal(rep_vector(0,n),tau * cov_delta);
+  }
 }

@@ -1,6 +1,6 @@
 Package: bayesbr
 Title: Beta Regression on a Bayesian Model
-Version: 0.0.0.1
+Version: 0.0.0.2
 Authors@R: c(person(given = "Joao", family = "Melo", role = c("aut", "cre"), email = "pjoao266@gmail.com"),
              person(given = "Vinicius", family = "Mayrink", role = "aut", email = "vdinizm@gmail.com"))
 Description: Applies the Beta regression model on the Bayesian statistical view, the Beta regression is used when the response variable is a proportion variable, that is, it only accepts values between 0 and 1.

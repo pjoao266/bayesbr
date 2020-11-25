@@ -25,7 +25,7 @@
 #'\item{formula}{the original formula,}
 #'\item{y}{the response proportion vector,}
 #'\item{stancode}{lines of code containing the .STAN file used to estimate the model,}
-#'\item{info}{a list containing model information such as the argument pars passed as argument, name of variables, number of: iterations, warmups, chains, covariables for theta, covariables for zeta and observations of the sample. In addition there is an element called samples, with the posterior distribution of the parameters of interest,}
+#'\item{info}{a list containing model information such as the argument pars passed as argument, name of variables, indicator for effect spatial in model, number of: iterations, warmups, chains, covariables for theta, covariables for zeta and observations of the sample. In addition there is an element called samples, with the posterior distribution of the parameters of interest,}
 #'\item{fitted.values}{a vector containing the estimates for the values corresponding to the theta of each observation of the variable response, the estimate is made using the mean of the a prior theta distribution,}
 #'\item{model}{the full model frame,}
 #'\item{residuals}{a vector of residuals}
@@ -76,12 +76,31 @@
 #'See \code{\link{predict.bayesbr}}, \code{\link{residuals.bayesbr}},\code{\link{summary.bayesbr}},\code{\link{logLik.bayesbr}} and \code{\link{pseudo.r.squared}} for more details on all methods. Because it is in the context of Bayesian statistics, in all calculations that were defined using maximum verisimilitude, this was sub-replaced by the mean of the posterior distribution of the parameters of interest of the formula.
 #'@export
 bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_betas = NULL,
-                    variance_betas = NULL,mean_gammas = NULL,
+                    variance_betas = NULL,mean_gammas = NULL ,m_neighborhood = NULL, rho = NULL,
                     variance_gammas = NULL ,iter = 10000,warmup = iter/2,
-                    chains = 1,pars=NULL,a = NULL,b = NULL, resid.type = c("quantile","sweighted", "pearson","ordinary"),...){
+                    chains = 1,pars=NULL,a = NULL,b = NULL, atau = NULL, btau = NULL, resid.type = c("quantile","sweighted", "pearson","ordinary"),...){
   cl = match.call()
   r_mc_aux = T
   resid.type = match.arg(resid.type)
+
+  spatial_theta = 0
+  if(!is.null(m_neighborhood)){
+    if(nrow(m_neighborhood) == ncol(m_neighborhood) &&
+       nrow(m_neighborhood) == nrow(dados) &&
+       isTRUE(all.equal(m_neighborhood,t(m_neighborhood))) &&
+       isTRUE(all.equal(diag(m_neighborhood),diag(matrix(0,ncol(m_neighborhood),ncol(m_neighborhood)))))){
+          elements = m_neighborhood %>% unique() %>% lapply(unique) %>% do.call(c,.) %>%
+            unique()
+          if(length(elements) == 2 && 1 %in% elements && 0 %in% elements){
+            spatial_theta = 1
+          }
+        }
+    if(spatial_theta != 0){
+      warning("The informed neighborhood matrix is invalid, check it. The model will be adjusted with no spatial effect on the data.",call. = T)
+      Sys.sleep(3)
+    }
+  }
+
   if(!is.null(formula)){
     dados = formula(as.formula(formula),data)
     Y = dados[[1]]
@@ -115,6 +134,30 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
       stop("zeta 'b' priori parameter cannot be negative",call.=TRUE)
     }
   }
+
+  if(!is.null(rho)){
+    if(rho<=0 || rho>=1){
+      stop("variable 'rho' must be a value between 0 and 1",call.=TRUE)
+    }
+  }
+
+  if(!is.null(atau)){
+    if(atau<=0){
+      stop("tau 'a' priori cannot be negative",call.=TRUE)
+    }
+  }
+
+  if(!is.null(btau)){
+    if(btau<=0){
+      stop("tau 'a' priori cannot be negative",call.=TRUE)
+    }
+  }
+
+  if((!is.null(atau) || !is.null(btau) || !is.null(rho)) && is.null(m_neighborhood)){
+    warning("You provided prioris for tau or value for rho, but you did not inform the neighborhood matrix. If you want a spatial effect you need to inform the matrix, the model will be adjusted without the spatial effect.",call. = T)
+    Sys.sleep(3)
+  }
+
   if(is.numeric(warmup)){
     warmup = as.integer(warmup)
   }
@@ -153,6 +196,8 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
   else{
     q=0
   }
+  n = length(Y)
+
 
   na.action = match.arg(na.action)
   if(na.action == "exclude"){
@@ -197,7 +242,19 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
       warning("The model variables may have changed, for more details check the complete model returned in the item model.")
       }
   }
-  n = length(Y)
+  if(spatial_theta == 1){
+    atau = ifelse(is.null(atau) || is.null(btau),0.1,atau)
+    btau = ifelse(is.null(atau) || is.null(btau),0.1,btau)
+    rho = ifelse(is.null(rho),0.9,rho)
+    Dw = diag(apply(m_neighborhood,1,sum))
+    mat_cov = solve(Dw - rho * m_neighborhood)
+  }
+  else{
+    mat_cov = matrix(0,n,n)
+  }
+
+
+
   if(max(Y)>=1 || min(Y)<=0){
     warning("Some of your data is outside the range between 0 and 1 (extremes not included in the range), so beta regression cannot be applied.")
   }
@@ -234,7 +291,8 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
     a = 2
     b = 2
   }
-  data = list(n=n, p = p, q = q, Y=Y,a=a,b=b)
+  data = list(n=n, p = p, q = q, Y=Y,a=a,b=b,spatial_theta = spatial_theta,
+              cov_delta = mat_cov,atau = atau, btau = btau)
   pars_aux = c()
   if(p==0){
     data$X = matrix(1,n,0)
@@ -260,8 +318,11 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
     data$variance_gammas = array(variance_gammas)
     pars_aux = c("gammas","zeta",pars_aux)
   }
+  if(spatial == 1){
+    pars_aux = c("tau","delta",pars_aux)
+  }
   if(is.null(pars)){
-    pars = c("betas","zeta_e","theta","theta_e","gammas","zeta")
+    pars = c("betas","zeta_e","theta","theta_e","gammas","zeta",'tau','theta')
   }
 
   if(!("betas" %in% pars) && p>0){
@@ -287,6 +348,9 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
   gammas = values("gamma",object,iter,warmup,n,q)
   theta = values("theta",object,iter,warmup,n,p)
   zeta = values("zeta",object,iter,warmup,n,q)
+  tau = values("tau",object,iter,warmup,n,q)
+  delta = values("delta",object,iter,warmup,n,q)
+
   model = model.bayesbr(Y,X,W,name_y,names_x,names_w)
   names(Y) = 1:n
 
@@ -297,11 +361,14 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
   rval$formula = formula
   rval$y = Y
   rval$stancode = object@stanmodel
-  rval$info = list(n = n, iter = iter, warmup = warmup, chains = chains, p = p, q = q)
+  rval$info = list(n = n, iter = iter, warmup = warmup, chains = chains, p = p, q = q,
+                   spatial = ifelse(spatial_theta==1,T,F))
   rval$info$names = list(name_y=name_y,names_x = names_x, names_w = names_w)
   rval$info$samples$beta = betas
   rval$info$samples$gamma = gammas
   rval$info$samples$theta = theta
+  rval$info$samples$delta = theta
+  rval$info$samples$tau = tau
   rval$fitted.values = fitted.values(rval)
   rval$info$samples$zeta = zeta
   rval$pars = pars_aux
@@ -313,6 +380,8 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
   }
   list_mean = summary_mean(rval)
   list_precision = summary_precision(rval)
+  list_tau = summary_tau(rval)
+  list_delta = summary_tau(rval)
 
   rval$coefficients = list(mean = list_mean[['betas']],
                            precision = list_precision[['gammas']],

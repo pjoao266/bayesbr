@@ -2,13 +2,13 @@
 #'@aliases values
 #'@name values
 #'@description A function that uses the values returned from the sampling function of RStan and returns the parameter chain of the posterior distribution, the parameters can be beta, gamma, theta or zeta.
-#'@usage values(type = c("beta","gamma","theta","zeta"),obj, iter, warmup, n, par)
+#'@usage values(type = c("beta","gamma","theta","zeta","tau","delta"),obj, iter, warmup, n, par)
 #'@param type Characters indicating which values will be returned by the function
 #'@param obj containing the data returned from the sampling function of the Rstan package. This type of object is used because it returns the values of the posterior distribution of the model.
 #'@param iter A positive integer specifying the number of iterations for each chain (including warmup).
 #'@param warmup A positive integer specifying the number of iterations that will be in the warm-up period.
 #'@param n The number of observations of the model's variable response.
-#'@param par A number containing the number of parameters for theta or zeta. If type is equal to beta or theta par is similar to p (number of parameters for theta), otherwise even is similar to q (number of parameters for zeta).
+#'@param par A number containing the number of parameters for theta or zeta. If type is equal to beta or theta par is similar to p (number of parameters for theta), otherwise even is similar to q (number of parameters for zeta). When type is equal to 'delta' or 'tau' the par variable verify spatial effect in adjusted model.
 #'@details The function \code{values} returns the parameter of interest by taking the data returned by the Stan function excluding the warmup period data. All data returned is in the format of 5 decimal places.
 #'@return A list containing the values according to the type argument, the values are returned excluding the warmups.
 #'@seealso \code{\link{summary_mean}},\code{\link{summary_precision}},\code{\link{model.bayesbr}}
@@ -97,6 +97,26 @@ values = function(type=c("beta","gamma","theta","zeta"),obj,iter,warmup,n,par){
     }
     else{
       list = NULL
+    }
+    return(list)
+  }
+  if(type=="tau"){
+    list = NULL
+    if(par==1){
+      tau = obj@sim$samples[[1]]$'tau'
+      tau = round(tau,5)
+      tau = tau[(warmup+1):iter]
+      list[['tau']] = tau
+    }
+    return(list)
+  }
+  if(type=="delta"){
+    list = NULL
+    if(par==1){
+      delta = obj@sim$samples[[1]]$'delta'
+      delta = round(delta,5)
+      delta = delta[(warmup+1):iter]
+      list[['delta']] = delta
     }
     return(list)
   }
