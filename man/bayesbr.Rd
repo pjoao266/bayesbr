@@ -43,7 +43,7 @@ will soon be discarded when making the estimates and inferences. Warmup must be 
 \item{formula}{the original formula,}
 \item{y}{the response proportion vector,}
 \item{stancode}{lines of code containing the .STAN file used to estimate the model,}
-\item{info}{a list containing model information such as the argument pars passed as argument, name of variables, number of: iterations, warmups, chains, covariables for theta, covariables for zeta and observations of the sample. In addition there is an element called samples, with the posterior distribution of the parameters of interest,}
+\item{info}{a list containing model information such as the argument pars passed as argument, name of variables, indicator for effect spatial in model, number of: iterations, warmups, chains, covariables for theta, covariables for zeta and observations of the sample. In addition there is an element called samples, with the posterior distribution of the parameters of interest,}
 \item{fitted.values}{a vector containing the estimates for the values corresponding to the theta of each observation of the variable response, the estimate is made using the mean of the a prior theta distribution,}
 \item{model}{the full model frame,}
 \item{residuals}{a vector of residuals}

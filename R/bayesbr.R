@@ -85,17 +85,20 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
 
   spatial_theta = 0
   if(!is.null(m_neighborhood)){
+    print("A")
     if(nrow(m_neighborhood) == ncol(m_neighborhood) &&
        nrow(m_neighborhood) == nrow(dados) &&
        isTRUE(all.equal(m_neighborhood,t(m_neighborhood))) &&
        isTRUE(all.equal(diag(m_neighborhood),diag(matrix(0,ncol(m_neighborhood),ncol(m_neighborhood)))))){
-          elements = m_neighborhood %>% unique() %>% lapply(unique) %>% do.call(c,.) %>%
+      print("B")
+      elements = m_neighborhood %>% unique() %>% lapply(unique) %>% do.call(c,.) %>%
             unique()
           if(length(elements) == 2 && 1 %in% elements && 0 %in% elements){
+            print("C")
             spatial_theta = 1
           }
         }
-    if(spatial_theta != 0){
+    if(spatial_theta == 0){
       warning("The informed neighborhood matrix is invalid, check it. The model will be adjusted with no spatial effect on the data.",call. = T)
       Sys.sleep(3)
     }
@@ -318,7 +321,7 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
     data$variance_gammas = array(variance_gammas)
     pars_aux = c("gammas","zeta",pars_aux)
   }
-  if(spatial == 1){
+  if(spatial_theta == 1){
     pars_aux = c("tau","delta",pars_aux)
   }
   if(is.null(pars)){
