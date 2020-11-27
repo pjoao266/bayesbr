@@ -11,7 +11,7 @@
 #'\item{coeff}{a vector containing the estimated coefficients.}}
 #'@seealso \code{\link{summary_delta}},\code{\link{values}},\code{\link{summary.bayesbr}}
 summary_tau = function(x,prob=0.95){
-  tau = x$info$samples$tau
+  tau = x$info$samples$tau$tau
   warmup = x$info$warmup
   iter = x$info$iter
   table = NULL
