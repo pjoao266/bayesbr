@@ -112,11 +112,16 @@ values = function(type=c("beta","gamma","theta","zeta"),obj,iter,warmup,n,par){
   }
   if(type=="delta"){
     list = NULL
+
     if(par==1){
-      delta = obj@sim$samples[[1]]$'delta'
-      delta = round(delta,5)
-      delta = delta[(warmup+1):iter]
-      list[['delta']] = delta
+      for (i in 1:n) {
+        aux = paste0('delta[',i,']')
+        deltas = obj@sim$samples[[1]]
+        deltas = deltas[[aux]]
+        deltas = round(deltas,5)
+        deltas = deltas[(warmup+1):iter]
+        list[[aux]] = deltas
+      }
     }
     return(list)
   }

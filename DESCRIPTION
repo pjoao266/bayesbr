@@ -34,6 +34,6 @@ LinkingTo:
     RcppParallel
 SystemRequirements: GNU make
 License: GPL-2
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 URL: https://github.com/pjoao266/bayesbr
 BugReports: https://github.com/pjoao266/bayesbr/issues

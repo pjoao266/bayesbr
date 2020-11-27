@@ -348,8 +348,7 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
   gammas = values("gamma",object,iter,warmup,n,q)
   theta = values("theta",object,iter,warmup,n,p)
   zeta = values("zeta",object,iter,warmup,n,q)
-  tau = values("tau",object,iter,warmup,n,q)
-  delta = values("delta",object,iter,warmup,n,q)
+
 
   model = model.bayesbr(Y,X,W,name_y,names_x,names_w)
   names(Y) = 1:n
@@ -367,26 +366,44 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
   rval$info$samples$beta = betas
   rval$info$samples$gamma = gammas
   rval$info$samples$theta = theta
-  rval$info$samples$delta = theta
-  rval$info$samples$tau = tau
+
   rval$fitted.values = fitted.values(rval)
   rval$info$samples$zeta = zeta
   rval$pars = pars_aux
   rval$model = model
+
   if(p>0){
     rval$residuals.type = resid.type
     res = residuals.bayesbr(rval,rval$residuals.type)
     rval$residuals = res
   }
+
   list_mean = summary_mean(rval)
   list_precision = summary_precision(rval)
-  list_tau = summary_tau(rval)
-  list_delta = summary_tau(rval)
 
   rval$coefficients = list(mean = list_mean[['betas']],
                            precision = list_precision[['gammas']],
                            summary_mean = list_mean[['table']],
                            summary_precision = list_precision[['table']])
+
+  if(spatial_theta == 1){
+    tau = values("tau",object,iter,warmup,n,q)
+    delta = values("delta",object,iter,warmup,n,q)
+
+    rval$info$samples$delta = delta
+    rval$info$samples$tau = tau
+
+    list_tau = summary_tau(rval)
+    list_delta = summary_delta(rval)
+
+
+    rval$coefficients[['tau']] = list_tau[['tau']]
+    rval$coefficients[['summary_tau']] = list_tau[['table']]
+
+    rval$coefficients[['deltas']] = list_delta[['deltas']]
+    rval$coefficients[['summary_deltas']] = list_delta[['table']]
+  }
+
   if(p>0){
     list_loglik = logLik.bayesbr(rval)
     rval$loglik = list_loglik$loglik
