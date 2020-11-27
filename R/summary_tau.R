@@ -18,10 +18,10 @@ summary_tau = function(x,prob=0.95){
   coeff = numeric()
   coeff = round(mean(tau),5)
 
-  median_t = round(median(betas),5)
-  sd_t = round(sd(betas),5)
-  beta_mcmc = as.mcmc( c(betas) )
-  hpd = HPDinterval(beta_mcmc, prob=prob)
+  median_t = round(median(tau),5)
+  sd_t = round(sd(tau),5)
+  tau_mcmc = as.mcmc( c(tau) )
+  hpd = HPDinterval(tau_mcmc, prob=prob)
 
   table = c(mean_t,median_t,sd_t,round(hpd[1:2],5))
   colnames(table) = c("Mean","Median", "Std. Dev.","HPD_inf","HPD_sup")
