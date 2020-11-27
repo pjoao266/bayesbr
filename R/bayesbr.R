@@ -251,8 +251,8 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
   }
   else{
     mat_cov = matrix(0,n,n)
-    atau = 0
-    btau = 0
+    atau = 0.1
+    btau = 0.1
   }
 
 
