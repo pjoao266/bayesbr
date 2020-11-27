@@ -74,7 +74,7 @@ summary.bayesbr = function(object,type=c("","quantile","sweighted", "pearson","o
   table = list$table
   print.default(table)
 
-  if(x$info$spatial){
+  if(object$info$spatial){
     cat("\nTau coefficient (spatio model): \n")
     list = summary_tau(object,prob)
     table = list$table

@@ -389,21 +389,21 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
                            summary_precision = list_precision[['table']])
 
   if(spatial_theta == 1){
-    tau = values("tau",object,iter,warmup,n,q)
-    delta = values("delta",object,iter,warmup,n,q)
+    tau = values("tau",object,iter,warmup,n,n)
+    delta = values("delta",object,iter,warmup,n,n)
 
     rval$info$samples$delta = delta
     rval$info$samples$tau = tau
 
-    list_tau = summary_tau(rval)
-    list_delta = summary_delta(rval)
-
-
-    rval$coefficients[['tau']] = list_tau[['tau']]
-    rval$coefficients[['summary_tau']] = list_tau[['table']]
-
-    rval$coefficients[['deltas']] = list_delta[['deltas']]
-    rval$coefficients[['summary_deltas']] = list_delta[['table']]
+#     list_tau = summary_tau(rval)
+#     list_delta = summary_delta(rval)
+#
+#
+#     rval$coefficients[['tau']] = list_tau[['tau']]
+#     rval$coefficients[['summary_tau']] = list_tau[['table']]
+#
+#     rval$coefficients[['deltas']] = list_delta[['deltas']]
+#     rval$coefficients[['summary_deltas']] = list_delta[['table']]
   }
 
   if(p>0){
