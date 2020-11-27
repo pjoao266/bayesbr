@@ -85,16 +85,13 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
 
   spatial_theta = 0
   if(!is.null(m_neighborhood)){
-    print("A")
     if(nrow(m_neighborhood) == ncol(m_neighborhood) &&
        nrow(m_neighborhood) == nrow(dados) &&
        isTRUE(all.equal(m_neighborhood,t(m_neighborhood))) &&
        isTRUE(all.equal(diag(m_neighborhood),diag(matrix(0,ncol(m_neighborhood),ncol(m_neighborhood)))))){
-      print("B")
       elements = m_neighborhood %>% unique() %>% lapply(unique) %>% do.call(c,.) %>%
             unique()
           if(length(elements) == 2 && 1 %in% elements && 0 %in% elements){
-            print("C")
             spatial_theta = 1
           }
         }

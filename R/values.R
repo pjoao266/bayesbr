@@ -12,7 +12,7 @@
 #'@details The function \code{values} returns the parameter of interest by taking the data returned by the Stan function excluding the warmup period data. All data returned is in the format of 5 decimal places.
 #'@return A list containing the values according to the type argument, the values are returned excluding the warmups.
 #'@seealso \code{\link{summary_mean}},\code{\link{summary_precision}},\code{\link{model.bayesbr}}
-values = function(type=c("beta","gamma","theta","zeta"),obj,iter,warmup,n,par){
+values = function(type=c("beta","gamma","theta","zeta",'tau','delta'),obj,iter,warmup,n,par){
   type = match.arg(type)
   if(type=="theta"){
     list = list()
