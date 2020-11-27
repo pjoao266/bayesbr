@@ -16,7 +16,8 @@ summary_tau = function(x,prob=0.95){
   iter = x$info$iter
   table = NULL
   coeff = numeric()
-  coeff = round(mean(tau),5)
+  mean_t = round(mean(tau),5)
+  coeff = mean_t
 
   median_t = round(median(tau),5)
   sd_t = round(sd(tau),5)
