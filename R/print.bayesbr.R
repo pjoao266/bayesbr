@@ -35,7 +35,7 @@ print.bayesbr  = function(x,...){
   print.default(format(precision, digits = 5), print.gap = 2, quote = FALSE)
 
   if(x$info$spatial){
-  cat("\nTau coefficient (spatio model): ")
+  cat("\nTau coefficient (spatio model): \n")
   print.default(format(tau, digits = 5), print.gap = 2, quote = FALSE)
   }
 

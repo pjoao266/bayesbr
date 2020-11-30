@@ -1,13 +1,14 @@
 #'@title Bayesian Beta Regression with RStan
 #'@aliases bayesbr
 #'@name bayesbr
-#'@usage bayesbr(formula = NULL, data = NULL,na.action=c("exclude",
-#'"replace"),mean_betas = NULL,variance_betas = NULL,mean_gammas = NULL,
-#' variance_gammas = NULL,iter = 10000, warmup = iter/2,
-#' chains = 1, pars = NULL, a = NULL, b = NULL,
+#'@usage bayesbr(formula = NULL, data = NULL, m_neighborhood = NULL,
+#' na.action=c("exclude", "replace"),mean_betas = NULL,variance_betas = NULL,
+#' mean_gammas = NULL, variance_gammas = NULL,iter = 10000, warmup = iter/2,
+#' chains = 1, pars = NULL, a = NULL, b = NULL, atau = NULL, btau = NULL,
 #' resid.type = c("quantile","sweighted", "pearson","ordinary"), ...)
 #'@param formula symbolic description of the model (of type \code{y ~ x} or \code{y ~ x | z};). See more at \code{\link{formula}}
 #'@param data data frame or list with the variables passed in the formula parameter, if \code{data = NULL} the function will use the existing variables in the global environment.
+#'@param m_neighborhood A neighborhood matrix with n rows and n columns, with n the number of observations of the model to be adjusted. This matrix should only contain a value of 0 on the main diagonal, and a value of 0 or 1 at position i j, to inform whether observation i is next to observation j. It must be symmetric, because if i is a neighbor of j, j is also a neighbor of i. This matrix will be used to calculate the model's covariance matrix, if one of the conditions is not accepted or the neighborhood matrix is not informed, the model will be adjusted without the spatial effect.
 #'@param na.action Characters provided or treatment used in NA values. If \code{na.action} is equal to exclude (default value), the row containing the NA will be excluded in all variables of the model. If \code{na.action} is equal to replace, the row containing the NA will be replaced by the average of the variable in all variables of the model.
 #'@param mean_betas,variance_betas vectors including a priori information of mean and variance for the estimated beta respectively, beta is the name given to the coefficient of each covariate that influences theta. PS: the size of the vectors must equal p + 1, p being the number of covariates for theta.
 #'@param mean_gammas,variance_gammas vectors including a priori information of mean and variance for the estimated ranges respectively, gamma is the name given to the coefficient of each covariate that influences zeta. PS: the size of the vectors must be equal to q + 1, q being the number of covariates for zeta.
@@ -17,6 +18,8 @@
 #'@param chains A positive integer specifying the number of Markov chains. The default is 1.
 #'@param pars A vector of character strings specifying parameters of interest. The default is NULL indicating all parameters in the model.
 #'@param a,b Positive integer specifying the a priori information of the parameters of the gamma distribution for the zeta, if there are covariables explaining zeta \code{a} and \code{b} they will not be used. The default value for \code{a} is 1 and default value for \code{b} is 0.01 .
+#'@param atau,btau Positive integer specifying the a priori information of tau parameter of the gamma distribution. The default value for \code{atau} is 0.1 and default value for \code{btau} is 0.1 .
+#'@param rho value of the time scaling parameter for calculate the covariance matrix.
 #'@param resid.type A character containing the residual type returned by the model among the possibilities. The type of residue can be \emph{quantile}, \emph{sweighted}, \emph{pearson} or \emph{ordinary}. The default is \emph{quantile}.
 #'@param ... 	Other optional parameters from RStan
 #'@return   \code{bayesbr} return an object of class \emph{bayesbr}, a list of the following items.
@@ -28,8 +31,9 @@
 #'\item{info}{a list containing model information such as the argument pars passed as argument, name of variables, indicator for effect spatial in model, number of: iterations, warmups, chains, covariables for theta, covariables for zeta and observations of the sample. In addition there is an element called samples, with the posterior distribution of the parameters of interest,}
 #'\item{fitted.values}{a vector containing the estimates for the values corresponding to the theta of each observation of the variable response, the estimate is made using the mean of the a prior theta distribution,}
 #'\item{model}{the full model frame,}
-#'\item{residuals}{a vector of residuals}
+#'\item{residuals}{a vector of residuals,}
 #'\item{residuals.type}{the type of returned residual,}
+#'\item{deltas}{a matrix with the means, medians, standard deviations and the Highest Posterior Density (HPD) Interval of the delta parameter. The estimation for the delta parameter, informs the influence that a given region has on the response variable, neighboring observations are expected to have close estimates for delta.}
 #'\item{loglik}{log-likelihood of the fitted model(using the mean of the parameters in the posterior distribution),}
 #'\item{AIC}{a value containing the Akaike's Information Criterion (AIC) of the fitted model,}
 #'\item{BIC}{a value containing the Bayesian Information Criterion (BIC) of the fitted model,}
@@ -75,10 +79,11 @@
 #'
 #'See \code{\link{predict.bayesbr}}, \code{\link{residuals.bayesbr}},\code{\link{summary.bayesbr}},\code{\link{logLik.bayesbr}} and \code{\link{pseudo.r.squared}} for more details on all methods. Because it is in the context of Bayesian statistics, in all calculations that were defined using maximum verisimilitude, this was sub-replaced by the mean of the posterior distribution of the parameters of interest of the formula.
 #'@export
-bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_betas = NULL,
-                    variance_betas = NULL,mean_gammas = NULL ,m_neighborhood = NULL, rho = NULL,
+bayesbr = function(formula=NULL,data=NULL,m_neighborhood = NULL,na.action=c("exclude","replace"),mean_betas = NULL,
+                    variance_betas = NULL,mean_gammas = NULL,
                     variance_gammas = NULL ,iter = 10000,warmup = iter/2,
-                    chains = 1,pars=NULL,a = NULL,b = NULL, atau = NULL, btau = NULL, resid.type = c("quantile","sweighted", "pearson","ordinary"),...){
+                    chains = 1,pars=NULL,a = NULL,b = NULL, atau = NULL, btau = NULL,rho = NULL,
+                   resid.type = c("quantile","sweighted", "pearson","ordinary"),...){
   cl = match.call()
   r_mc_aux = T
   resid.type = match.arg(resid.type)
@@ -149,7 +154,7 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
 
   if(!is.null(btau)){
     if(btau<=0){
-      stop("tau 'a' priori cannot be negative",call.=TRUE)
+      stop("tau 'b' priori cannot be negative",call.=TRUE)
     }
   }
 
@@ -394,11 +399,16 @@ bayesbr = function(formula=NULL,data=NULL,na.action=c("exclude","replace"),mean_
     list_tau = summary_tau(rval)
     list_delta = summary_delta(rval)
 
+
+
     rval$coefficients[['tau']] = list_tau[['tau']]
     rval$coefficients[['summary_tau']] = list_tau[['table']]
 
     rval$coefficients[['deltas']] = list_delta[['deltas']]
     rval$coefficients[['summary_deltas']] = list_delta[['table']]
+
+
+    rval$deltas = list_delta[['table']]
   }
 
   if(p>0){

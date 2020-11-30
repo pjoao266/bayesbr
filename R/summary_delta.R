@@ -12,7 +12,7 @@
 #'@seealso \code{\link{summary_tau}},\code{\link{values}},\code{\link{summary.bayesbr}}
 summary_delta = function(x,prob=0.95){
   deltas = x$info$samples$delta
-  n = rval$info$n
+  n = x$info$n
   warmup = x$info$warmup
   iter = x$info$iter
 
@@ -20,7 +20,7 @@ summary_delta = function(x,prob=0.95){
   coeff = numeric()
 
   for (i in 1:n) {
-    aux = paste0('tau[',i,']')
+    aux = paste0('delta[',i,']')
     delta = deltas[[aux]]
 
     mean_t = round(mean(delta),5)
