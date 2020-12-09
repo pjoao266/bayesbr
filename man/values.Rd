@@ -4,7 +4,7 @@
 \alias{values}
 \title{Values of a Posteriori Distribution}
 \usage{
-values(type = c("beta","gamma","theta","zeta","tau","delta"),obj, iter, warmup, n, par)
+values(type=c("beta","gamma","theta","zeta",'tau_delta','tau_xi','xi','delta'),obj,iter,warmup,n,par))
 }
 \arguments{
 \item{type}{Characters indicating which values will be returned by the function}
@@ -17,7 +17,7 @@ values(type = c("beta","gamma","theta","zeta","tau","delta"),obj, iter, warmup, 
 
 \item{n}{The number of observations of the model's variable response.}
 
-\item{par}{A number containing the number of parameters for theta or zeta. If type is equal to beta or theta par is similar to p (number of parameters for theta), otherwise even is similar to q (number of parameters for zeta). When type is equal to 'delta' or 'tau' the par variable verify spatial effect in adjusted model.}
+\item{par}{A number containing the number of parameters for theta or zeta. If type is equal to beta or theta par is similar to p (number of parameters for theta), otherwise even is similar to q (number of parameters for zeta). When type is equal to 'delta', 'xi', 'tau_xi', or 'tau_delta' the par variable verify spatial effect in adjusted model.}
 }
 \value{
 A list containing the values according to the type argument, the values are returned excluding the warmups.

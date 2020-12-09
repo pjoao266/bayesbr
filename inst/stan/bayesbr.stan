@@ -1,3 +1,4 @@
+
 // Data block
 data{
   int<lower=0> n;
@@ -5,9 +6,12 @@ data{
   int<lower=0> q;
   real<lower=0> a;
   real<lower=0> b;
-  real<lower=0> atau;
-  real<lower=0> btau;
-  real<lower = 0, upper = 1> spatial_theta;
+  real<lower=0> atau_delta;
+  real<lower=0> btau_delta;
+  real<lower=0> atau_xi;
+  real<lower=0> btau_xi;
+  int<lower = 0, upper = 1> spatial_theta;
+  int<lower = 0, upper = 1> spatial_zeta;
   vector[n] Y;
   matrix[n,p] X;
   matrix[n,q] W;
@@ -16,6 +20,7 @@ data{
   vector[q] mean_gammas;
   vector[q] variance_gammas;
   matrix[n,n] cov_delta;
+  matrix[n,n] cov_xi;
 }
 
 // Parameters block
@@ -23,7 +28,10 @@ parameters{
   vector[p] betas;
   vector[q] gammas;
   vector[n] delta;
-  real<lower = 0> tau;
+  vector[n] xi;
+
+  real<lower = 0> tau_delta;
+  real<lower = 0> tau_xi;
   real<lower = 0> zeta_e;
   real<lower = 0, upper = 1> theta_e;
 }
@@ -46,10 +54,14 @@ transformed parameters{
     theta = exp(lpredt)./(1+exp(lpredt));
   }
   if(q!=0){
-    lpredz = W * gammas;
+    if(spatial_zeta == 1){
+        lpredz = W * gammas + xi;
+    }
+    else{
+        lpredz = W * gammas;
+    }
     zeta = exp(lpredz);
   }
-
 }
 
 
@@ -80,7 +92,11 @@ model{
   gammas ~ normal(mean_gammas,variance_gammas);
   zeta_e ~ gamma(a,b);
   if(spatial_theta == 1){
-    tau ~ gamma(atau,btau);
-    delta ~ multi_normal(rep_vector(0,n),tau * cov_delta);
+    tau_delta ~ gamma(atau_delta,btau_delta);
+    delta ~ multi_normal(rep_vector(0,n),tau_delta * cov_delta);
+  }
+  if(spatial_zeta == 1){
+    tau_xi ~ gamma(atau_xi,btau_xi);
+    xi ~ multi_normal(rep_vector(0,n),tau_xi * cov_xi);
   }
 }

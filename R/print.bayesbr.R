@@ -23,7 +23,7 @@ print.bayesbr  = function(x,...){
   }
   mean = x$coefficients$mean
   precision = x$coefficients$precision
-  tau = x$coefficients$tau
+
   if(length(mean)==0){
     cat("\nNo coefficients (in mean model)\n")
   }
@@ -34,11 +34,17 @@ print.bayesbr  = function(x,...){
   cat("\nCoefficients (precision model): \n")
   print.default(format(precision, digits = 5), print.gap = 2, quote = FALSE)
 
-  if(x$info$spatial){
-  cat("\nTau coefficient (spatio model): \n")
-  print.default(format(tau, digits = 5), print.gap = 2, quote = FALSE)
+  if(x$info$spatial_theta){
+    tau = x$coefficients$tau_delta
+    cat("\nVariance Tau_delta (spatial model): \n")
+    print.default(format(tau, digits = 5), print.gap = 2, quote = FALSE)
   }
 
+  if(x$info$spatial_zeta){
+    tau = x$coefficients$tau_xi
+    cat("\nVariance Tau_xi (spatial model): \n")
+    print.default(format(tau, digits = 5), print.gap = 2, quote = FALSE)
+  }
   cat("\nNumber of Chains: ",deparse(x$info$chain),"\nIter: ",deparse(x$info$iter),"\nWarmup:",deparse(x$info$warmup),"\n")
 
 }
