@@ -358,6 +358,7 @@ bayesbr = function(formula=NULL,data=NULL,m_neighborhood = NULL,
               spatial_theta = ifelse(spatial_theta==T,1,0),
               spatial_zeta = ifelse(spatial_zeta==T,1,0),
               cov_delta = mat_cov,cov_xi = mat_cov,atau_delta = atau_delta,
+              cov_delta = mat_cov,atau_delta = atau_delta,
               btau_delta = btau_delta,atau_xi = atau_xi,
               btau_xi = btau_xi)
 
