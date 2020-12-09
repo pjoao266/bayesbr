@@ -437,6 +437,7 @@ bayesbr = function(formula=NULL,data=NULL,m_neighborhood = NULL,
   rval$stancode = object@stanmodel
   rval$info = list(n = n, iter = iter, warmup = warmup, chains = chains, p = p, q = q,
                    spatial_theta = spatial_theta,spatial_zeta = spatial_zeta)
+
   rval$info$names = list(name_y=name_y,names_x = names_x, names_w = names_w)
   rval$info$samples$beta = betas
   rval$info$samples$gamma = gammas
@@ -466,7 +467,7 @@ bayesbr = function(formula=NULL,data=NULL,m_neighborhood = NULL,
                            summary_precision = list_precision[['table']])
 
   if(spatial_theta == T){
-    list_tau_delta = summary_tau_delta(rval,"delta")
+    list_tau_delta = summary_tau_delta(rval)
     list_delta = summary_delta(rval)
 
 
@@ -481,11 +482,9 @@ bayesbr = function(formula=NULL,data=NULL,m_neighborhood = NULL,
     rval$delta = list_delta[['table']]
   }
 
-  if(spatial_xi == T){
-    list_tau_xi = summary_tau_xi(rval,"xi")
+  if(spatial_zeta == T){
+    list_tau_xi = summary_tau_xi(rval)
     list_xi = summary_xi(rval)
-
-
 
     rval$coefficients[['tau_xi']] = list_tau_xi[['tau_xi']]
     rval$coefficients[['summary_tau_xi']] = list_tau_xi[['table']]

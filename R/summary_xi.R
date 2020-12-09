@@ -10,8 +10,8 @@
 #'\item{table}{a table with the means, medians, standard deviations and the Highest Posterior Density (HPD) Interval,}
 #'\item{coeff}{a vector containing the estimated coefficients.}}
 #'@seealso \code{\link{summary_delta}},\code{\link{values}},\code{\link{summary.bayesbr}}
-summary_delta = function(x,prob=0.95){
-  xi = x$info$samples$xi
+summary_xi = function(x,prob=0.95){
+  xis = x$info$samples$xi
   n = x$info$n
   warmup = x$info$warmup
   iter = x$info$iter
@@ -20,9 +20,8 @@ summary_delta = function(x,prob=0.95){
   coeff = numeric()
 
   for (i in 1:n) {
-    aux = paste0('delta[',i,']')
+    aux = paste0('xi[',i,']')
     xi = xis[[aux]]
-
     mean_t = round(mean(xi),5)
     coeff = c(coeff,mean_t)
     median_t = round(median(xi),5)
