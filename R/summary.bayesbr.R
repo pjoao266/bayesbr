@@ -74,20 +74,19 @@ summary.bayesbr = function(object,type=c("","quantile","sweighted", "pearson","o
   table = list$table
   print.default(table)
 
-  if(object$info$spatial){
-
-    cat("\nDelta coefficients (spatio model): \n")
-    list = summary_delta(object,prob)
-    delta = list$table
-    print.default(format(delta, digits = 5), print.gap = 2, quote = FALSE)
-
-
-    cat("\nTau coefficient (spatio model): \n")
-    list = summary_tau(object,prob)
+  if(object$info$spatial_theta){
+    cat("\nVariance Tau_delta (spatial model): \n")
+    list = summary_tau_delta(object,prob)
     table = list$table
     print.default(table)
   }
 
+  if(object$info$spatial_zeta){
+    cat("\nVariance Tau_xi (spatial model): \n")
+    list = summary_tau_xi(object,prob)
+    table = list$table
+    print.default(table)
+  }
 
   if(!is.null(object$PMSE)){
     cat("\n\nPMSE: ",format(object$PMSE, digits = 5))
