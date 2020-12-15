@@ -197,7 +197,8 @@ bayesbr = function(formula=NULL,data=NULL,m_neighborhood = NULL,
 
   if((!isTRUE(spatial_theta) && !isTRUE(spatial_zeta)) && aux_m_neig == 1){
     spatial_theta = T
-    warning('You entered the neighborhood matrix, but you did not say whether you want the spatial effect on the theta parameter or the zeta parameter or both. The model will be adjusted considering the spatial effect only in the theta parameter.',call. = T)
+    spatial_zeta = T
+    warning('You entered the neighborhood matrix, but you did not say whether you want the spatial effect on the theta parameter or the zeta parameter or both. The model will be adjusted considering the spatial effect in the theta and zeta parameters.',call. = T)
     Sys.sleep(3)
   }
 

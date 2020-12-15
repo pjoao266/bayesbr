@@ -75,14 +75,14 @@ summary.bayesbr = function(object,type=c("","quantile","sweighted", "pearson","o
   print.default(table)
 
   if(object$info$spatial_theta){
-    cat("\nVariance Tau_delta (spatial model): \n")
+    cat("\nVariance tau_delta (spatial model): \n")
     list = summary_tau_delta(object,prob)
     table = list$table
     print.default(table)
   }
 
   if(object$info$spatial_zeta){
-    cat("\nVariance Tau_xi (spatial model): \n")
+    cat("\nVariance tau_xi (spatial model): \n")
     list = summary_tau_xi(object,prob)
     table = list$table
     print.default(table)
