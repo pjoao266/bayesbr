@@ -24,7 +24,7 @@ summary_tau_xi = function(x,prob=0.95){
   tau_mcmc = as.mcmc( c(tau) )
   hpd = HPDinterval(tau_mcmc, prob=prob)
 
-  table = matrix(c(mean_t,median_t,sd_t,round(hpd[1],5),round(hpd[1],5)),nrow=1)
+  table = matrix(c(mean_t,median_t,sd_t,round(hpd[1],5),round(hpd[2],5)),nrow=1)
   colnames(table) = c("Mean","Median", "Std. Dev.","HPD_inf","HPD_sup")
   rownames(table) = 'tau_xi'
   names(coeff) = 'tau_xi'

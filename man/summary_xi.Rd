@@ -2,7 +2,6 @@
 % Please edit documentation in R/summary_xi.R
 \name{summary_xi}
 \alias{summary_xi}
-\alias{summary_delta}
 \title{Coefficients for xis}
 \usage{
 summary_xi(x,prob=0.95)
