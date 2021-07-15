@@ -91,7 +91,7 @@ bayesbr = function(formula=NULL,data=NULL,m_neighborhood = NULL,
                     variance_gammas = NULL ,iter = 10000,warmup = iter/2,
                     chains = 1,pars=NULL,a = NULL,b = NULL,
                    atau_delta = NULL, btau_delta = NULL,atau_xi = NULL,
-                   btau_xi = NULL,rho = NULL,spatial_theta = F,spatial_zeta=F,
+                   btau_xi = NULL,rho = NULL,spatial_theta = NULL,spatial_zeta=NULL,
                    resid.type = c("quantile","sweighted",
                                   "pearson","ordinary"),...){
   cl = match.call()
@@ -100,15 +100,19 @@ bayesbr = function(formula=NULL,data=NULL,m_neighborhood = NULL,
 
   aux_m_neig = 0
   if(!is.null(m_neighborhood)){
+
     if(nrow(m_neighborhood) == ncol(m_neighborhood) &&
-       nrow(m_neighborhood) == nrow(dados) &&
+       nrow(m_neighborhood) == nrow(data) &&
        isTRUE(all.equal(m_neighborhood,t(m_neighborhood))) &&
        isTRUE(all.equal(diag(m_neighborhood),diag(matrix(0,ncol(m_neighborhood),ncol(m_neighborhood)))))){
-      elements = m_neighborhood %>% unique() %>% lapply(unique) %>% do.call(c,.) %>%
-            unique()
-          if(length(elements) == 2 && 1 %in% elements && 0 %in% elements){
+        elements = m_neighborhood %>% unique() %>% lapply(unique) %>% do.call(c,.) %>%
+              unique()
+        Dw = diag(apply(m_neighborhood,1,sum))
+        if(length(elements) == 2 && 1 %in% elements && 0 %in% elements){
+          if(!(0 %in% diag(Dw))){
             aux_m_neig = 1
-          }
+          }        }
+
         }
     if(aux_m_neig == 0){
       warning("The informed neighborhood matrix is invalid, check it. The model will be adjusted with no spatial effect on the data.",call. = T)
@@ -192,14 +196,32 @@ bayesbr = function(formula=NULL,data=NULL,m_neighborhood = NULL,
     spatial_theta = F
     spatial_zeta = F
     warning("You reported that you want the spatial estimation for theta or zeta, but you did not report the neighborhood matrix. The model will be adjusted without the spatial effect.",call. = T)
-    Sys.sleep(3)
+    Sys.sleep(2)
   }
 
-  if((!isTRUE(spatial_theta) && !isTRUE(spatial_zeta)) && aux_m_neig == 1){
+  if((is.null(spatial_theta) && is.null(spatial_zeta)) && aux_m_neig == 1){
     spatial_theta = T
     spatial_zeta = T
     warning('You entered the neighborhood matrix, but you did not say whether you want the spatial effect on the theta parameter or the zeta parameter or both. The model will be adjusted considering the spatial effect in the theta and zeta parameters.',call. = T)
-    Sys.sleep(3)
+    Sys.sleep(2)
+  }
+
+  if(is.null(spatial_theta)){
+    if(aux_m_neig == 1){
+      spatial_theta = T
+    }
+    else{
+      spatial_theta = F
+    }
+
+  }
+  if(is.null(spatial_zeta)){
+    if(aux_m_neig == 1){
+      spatial_zeta = T
+    }
+    else{
+      spatial_zeta = F
+    }
   }
 
 
@@ -359,7 +381,6 @@ bayesbr = function(formula=NULL,data=NULL,m_neighborhood = NULL,
               spatial_theta = ifelse(spatial_theta==T,1,0),
               spatial_zeta = ifelse(spatial_zeta==T,1,0),
               cov_delta = mat_cov,cov_xi = mat_cov,atau_delta = atau_delta,
-              cov_delta = mat_cov,atau_delta = atau_delta,
               btau_delta = btau_delta,atau_xi = atau_xi,
               btau_xi = btau_xi)
 
