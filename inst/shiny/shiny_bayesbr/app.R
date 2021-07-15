@@ -16,6 +16,7 @@ require(stringr)
 require(ggplot2)
 require(magrittr)
 
+
 #--------------------------------------------------------------------
 options(scipen = 999,
         shiny.maxRequestSize=100*1024^2,

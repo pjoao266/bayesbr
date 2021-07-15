@@ -21,5 +21,5 @@ A list containing the estimates for delta parametrer, this list contains the fol
 A function that uses posterior distribution values of the model and calculates the estimates for delta parametrer.
 }
 \seealso{
-\code{\link{summary_tau}},\code{\link{values}},\code{\link{summary.bayesbr}}
+\code{\link{summary_xi}},\code{\link{values}},\code{\link{summary.bayesbr}}
 }

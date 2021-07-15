@@ -61,7 +61,7 @@ bbr = bayesbr(siri ~ age+wrist*neck+chest+
 summary(bbr)
 
 \donttest{
-bbr = bayesbr(siri ~ I(age/100)+heigth+chest+
+bbr = bayesbr(siri ~ I(age/100)+height+chest+
              thigh+wrist| wrist,
              data = bodyfat,iter = 1000)
 

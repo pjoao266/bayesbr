@@ -4,7 +4,7 @@
 \alias{bayesbr_app}
 \alias{bayesbr_app,}
 \alias{bayesbr_shiny}
-\title{bayesbr Application}
+\title{The bayesbr Application}
 \usage{
 bayesbr_app()
 }
@@ -12,12 +12,7 @@ bayesbr_app()
 A function that runs the shiny application designed for using bayesbr package functions through a visual interface.
 }
 \details{
-See the application manual:
-}
-\examples{
-\donttest{
-bayesbr_app()
-}
+See the application manual: \link[=bayesbr_shiny_app.html]{How to use bayesbr shiny app}
 }
 \seealso{
 \code{\link{bayesbr}}, \code{\link{shiny}}

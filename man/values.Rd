@@ -4,7 +4,14 @@
 \alias{values}
 \title{Values of a Posteriori Distribution}
 \usage{
-values(type=c("beta","gamma","theta","zeta",'tau_delta','tau_xi','xi','delta'),obj,iter,warmup,n,par))
+values(
+  type = c("beta", "gamma", "theta", "zeta", "tau_delta", "tau_xi", "xi", "delta"),
+  obj,
+  iter,
+  warmup,
+  n,
+  par
+)
 }
 \arguments{
 \item{type}{Characters indicating which values will be returned by the function}

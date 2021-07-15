@@ -37,7 +37,6 @@ data("ImpreciseTask", package = "bayesbr")
 
 bbr = bayesbr(location~difference,iter=100,
              data = ImpreciseTask)
-summary(bbr)
 }
 \references{
 \doi{10.3102/1076998610396893} Smithson, M., Merkle, E.C., and Verkuilen, J. (2011). Beta

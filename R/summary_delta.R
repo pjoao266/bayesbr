@@ -9,7 +9,7 @@
 #'\describe{
 #'\item{table}{a table with the means, medians, standard deviations and the Highest Posterior Density (HPD) Interval,}
 #'\item{coeff}{a vector containing the estimated coefficients.}}
-#'@seealso \code{\link{summary_tau}},\code{\link{values}},\code{\link{summary.bayesbr}}
+#'@seealso \code{\link{summary_xi}},\code{\link{values}},\code{\link{summary.bayesbr}}
 summary_delta = function(x,prob=0.95){
   deltas = x$info$samples$delta
   n = x$info$n

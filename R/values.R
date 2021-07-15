@@ -2,7 +2,6 @@
 #'@aliases values
 #'@name values
 #'@description A function that uses the values returned from the sampling function of RStan and returns the parameter chain of the posterior distribution, the parameters can be beta, gamma, theta or zeta.
-#'@usage values(type=c("beta","gamma","theta","zeta",'tau_delta','tau_xi','xi','delta'),obj,iter,warmup,n,par))
 #'@param type Characters indicating which values will be returned by the function
 #'@param obj containing the data returned from the sampling function of the Rstan package. This type of object is used because it returns the values of the posterior distribution of the model.
 #'@param iter A positive integer specifying the number of iterations for each chain (including warmup).
@@ -12,7 +11,7 @@
 #'@details The function \code{values} returns the parameter of interest by taking the data returned by the Stan function excluding the warmup period data. All data returned is in the format of 5 decimal places.
 #'@return A list containing the values according to the type argument, the values are returned excluding the warmups.
 #'@seealso \code{\link{summary_mean}},\code{\link{summary_precision}},\code{\link{model.bayesbr}}
-values = function(type=c("beta","gamma","theta","zeta",'tau_delta','tau_xi','xi','delta'),obj,iter,warmup,n,par){
+values = function(type=c("beta","gamma","theta","zeta","tau_delta","tau_xi","xi","delta"),obj,iter,warmup,n,par){
   type = match.arg(type)
   if(type=="theta"){
     list = list()

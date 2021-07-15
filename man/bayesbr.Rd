@@ -10,7 +10,7 @@ variance_betas = NULL,mean_gammas = NULL,
 variance_gammas = NULL ,iter = 10000,warmup = iter/2,
 chains = 1,pars=NULL,a = NULL,b = NULL,
 atau_delta = NULL, btau_delta = NULL,atau_xi = NULL,
-btau_xi = NULL,rho = NULL,spatial_theta = F,spatial_zeta=F,
+btau_xi = NULL,rho = NULL,spatial_theta = NULL,spatial_zeta=NULL,
 resid.type = c("quantile","sweighted",
             "pearson","ordinary"),...)
 }
