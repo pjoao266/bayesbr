@@ -11,11 +11,7 @@ require(dashboardthemes)
 require(shinyalert)
 require(shinyjs)
 require(openxlsx)
-require(dplyr)
-require(stringr)
-require(ggplot2)
-require(magrittr)
-
+require(tidyverse)
 
 #--------------------------------------------------------------------
 options(scipen = 999,

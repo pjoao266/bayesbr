@@ -47,5 +47,6 @@ Suggests:
   	dashboardthemes,
   	shinyalert,
   	shinyjs,
-  	openxlsx
+  	openxlsx,
+  	tidyverse
 VignetteBuilder: knitr

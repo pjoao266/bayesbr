@@ -12,8 +12,8 @@ bayesbr_app()
 A function that runs the shiny application designed for using bayesbr package functions through a visual interface.
 }
 \details{
-See the application manual: \link[=bayesbr_shiny_app.html]{How to use bayesbr shiny app}
+See the application manual: How to use bayesbr shiny app in vignnetes of bayesbr package.
 }
 \seealso{
-\code{\link{bayesbr}}, \code{\link{shiny}}
+\code{\link{bayesbr}}
 }

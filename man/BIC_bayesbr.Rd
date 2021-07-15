@@ -33,7 +33,7 @@ car_bayesbr <- bayesbr(probability ~ NFCCscale + task, data = CarTask,
 bic = BIC_bayesbr(car_bayesbr)
 }
 \references{
-\doi{10.1214/aos/1176344136}Schwarz, G. (1978). Estimating the dimension of a model. \emph{The annals of statistics}, \bold{6}(2), 461-464.
+Schwarz, G. (1978). Estimating the dimension of a model. \emph{The annals of statistics}, \bold{6}(2), 461-464.
 }
 \seealso{
 \code{\link{bayesbr}}, \code{\link{AIC_bayesbr}}, \code{\link{DIC_bayesbr}}
