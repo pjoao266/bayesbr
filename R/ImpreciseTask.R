@@ -32,5 +32,4 @@
 #'
 #'bbr = bayesbr(location~difference,iter=100,
 #'              data = ImpreciseTask)
-#'summary(bbr)
 "ImpreciseTask"

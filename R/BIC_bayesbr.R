@@ -13,8 +13,7 @@
 #'
 #'where \code{n} is the number of observations of the model variables, \code{k} is the number of covariates used in the model, and L is the average of the loglik chain returned by the function \code{\link{logLik.bayesbr}}.
 #'@return A number corresponding to the BIC (Bayesian Information Criterion) of the estimated model.
-#'@references
-#'  \doi{10.1214/aos/1176344136}Schwarz, G. (1978). Estimating the dimension of a model. \emph{The annals of statistics}, \bold{6}(2), 461-464.
+#'@references Schwarz, G. (1978). Estimating the dimension of a model. \emph{The annals of statistics}, \bold{6}(2), 461-464.
 #'@seealso \code{\link{bayesbr}}, \code{\link{AIC_bayesbr}}, \code{\link{DIC_bayesbr}}
 #'@examples
 #'data("CarTask",package = "bayesbr")

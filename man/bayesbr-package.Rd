@@ -5,7 +5,7 @@
 \alias{bayesbr-package}
 \title{bayesbr: A package for Bayesian Beta Regression}
 \description{
-The package fits or the beta regression model under the view of Bayesian statistics using the No-U-Turn-Sampler (NUTS) method for computational calculations. In addition to showing the coefficients, the package also has functions for displaying residuals, checking the model's convergence, checking the quality of the model and other utilities that may be useful.
+The package fits or the beta regression model under the view of Bayesian statistics using the No-U-Turn-Sampler (NUTS) method for computational calculations.The model can be adjusted considering or not the spatial effect on the parameters. In addition to showing the coefficients, the package also has functions for displaying residuals, checking the model's convergence, checking the quality of the model and other utilities that may be useful.
 }
 \references{
 \href{https://arxiv.org/abs/1111.4246}{arXiv:1111.4246} Hoffman, M. D., and Gelman, A. (2014). The No-U-Turn sampler: adaptively setting path lengths in Hamiltonian Monte Carlo. \emph{Journal of Machine Learning Research}, \bold{15}(1), 1593-1623.

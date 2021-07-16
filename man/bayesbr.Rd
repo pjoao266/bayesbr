@@ -4,16 +4,22 @@
 \alias{bayesbr}
 \title{Bayesian Beta Regression with RStan}
 \usage{
-bayesbr(formula = NULL, data = NULL,na.action=c("exclude",
-"replace"),mean_betas = NULL,variance_betas = NULL,mean_gammas = NULL,
-variance_gammas = NULL,iter = 10000, warmup = iter/2,
-chains = 1, pars = NULL, a = NULL, b = NULL,
-resid.type = c("quantile","sweighted", "pearson","ordinary"), ...)
+bayesbr(formula=NULL,data=NULL,m_neighborhood = NULL,
+na.action=c("exclude","replace"),mean_betas = NULL,
+variance_betas = NULL,mean_gammas = NULL,
+variance_gammas = NULL ,iter = 10000,warmup = iter/2,
+chains = 1,pars=NULL,a = NULL,b = NULL,
+atau_delta = NULL, btau_delta = NULL,atau_xi = NULL,
+btau_xi = NULL,rho = NULL,spatial_theta = NULL,spatial_zeta=NULL,
+resid.type = c("quantile","sweighted",
+            "pearson","ordinary"),...)
 }
 \arguments{
 \item{formula}{symbolic description of the model (of type \code{y ~ x} or \code{y ~ x | z};). See more at \code{\link{formula}}}
 
 \item{data}{data frame or list with the variables passed in the formula parameter, if \code{data = NULL} the function will use the existing variables in the global environment.}
+
+\item{m_neighborhood}{A neighborhood matrix with n rows and n columns, with n the number of observations of the model to be adjusted. This matrix should only contain a value of 0 on the main diagonal, and a value of 0 or 1 at position i j, to inform whether observation i is next to observation j. It must be symmetric, because if i is a neighbor of j, j is also a neighbor of i. This matrix will be used to calculate the model's covariance matrix, if one of the conditions is not accepted or the neighborhood matrix is not informed, the model will be adjusted without the spatial effect.}
 
 \item{na.action}{Characters provided or treatment used in NA values. If \code{na.action} is equal to exclude (default value), the row containing the NA will be excluded in all variables of the model. If \code{na.action} is equal to replace, the row containing the NA will be replaced by the average of the variable in all variables of the model.}
 
@@ -32,6 +38,12 @@ will soon be discarded when making the estimates and inferences. Warmup must be 
 
 \item{a, b}{Positive integer specifying the a priori information of the parameters of the gamma distribution for the zeta, if there are covariables explaining zeta \code{a} and \code{b} they will not be used. The default value for \code{a} is 1 and default value for \code{b} is 0.01 .}
 
+\item{atau_delta, btau_delta, atau_xi, btau_xi}{Positive integer specifying the a priori information of tau parameter of the gamma distribution. The default value for \code{atau_delta} and \code{atau_xi} is 0.1 and default value for \code{btau_delta} and \code{btau_xi} is 0.1.}
+
+\item{rho}{value of the time scaling parameter for calculate the covariance matrix.}
+
+\item{spatial_theta, spatial_zeta}{A Boolean variable to inform whether the adjusted model will have an effect on the theta parameter, or on the zeta parameter or both parameters.}
+
 \item{resid.type}{A character containing the residual type returned by the model among the possibilities. The type of residue can be \emph{quantile}, \emph{sweighted}, \emph{pearson} or \emph{ordinary}. The default is \emph{quantile}.}
 
 \item{...}{Other optional parameters from RStan}
@@ -43,11 +55,13 @@ will soon be discarded when making the estimates and inferences. Warmup must be 
 \item{formula}{the original formula,}
 \item{y}{the response proportion vector,}
 \item{stancode}{lines of code containing the .STAN file used to estimate the model,}
-\item{info}{a list containing model information such as the argument pars passed as argument, name of variables, number of: iterations, warmups, chains, covariables for theta, covariables for zeta and observations of the sample. In addition there is an element called samples, with the posterior distribution of the parameters of interest,}
+\item{info}{a list containing model information such as the argument pars passed as argument, name of variables, indicator for effect spatial in model, number of: iterations, warmups, chains, covariables for theta, covariables for zeta and observations of the sample. In addition there is an element called samples, with the posterior distribution of the parameters of interest,}
 \item{fitted.values}{a vector containing the estimates for the values corresponding to the theta of each observation of the variable response, the estimate is made using the mean of the a prior theta distribution,}
 \item{model}{the full model frame,}
-\item{residuals}{a vector of residuals}
+\item{residuals}{a vector of residuals,}
 \item{residuals.type}{the type of returned residual,}
+\item{delta}{a matrix with the means, medians, standard deviations and the Highest Posterior Density (HPD) Interval of the delta parameter (spatial effect in theta parameter). The estimation for the delta parameter, informs the influence that a given region has on the response variable, neighboring observations are expected to have close estimates for delta.}
+\item{xi}{a matrix with the means, medians, standard deviations and the Highest Posterior Density (HPD) Interval of the xi parameter (spatial effect in zeta parameter). The estimation for the xi parameter, informs the influence that a given region has on the response variable, neighboring observations are expected to have close estimates for xi.}
 \item{loglik}{log-likelihood of the fitted model(using the mean of the parameters in the posterior distribution),}
 \item{AIC}{a value containing the Akaike's Information Criterion (AIC) of the fitted model,}
 \item{BIC}{a value containing the Bayesian Information Criterion (BIC) of the fitted model,}
